@@ -80,6 +80,8 @@ let homeTemplate = BasicSite.GlobalTemplate(match: #"/"#, suffix: "html") { site
 EOF
 ```
 
+To tie it all together, let's define the site itself in _main.swift_.
+
 ```sh
 rm Sources/MySite/main.swift
 
