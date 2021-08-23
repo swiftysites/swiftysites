@@ -30,7 +30,8 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "MySite",
-            dependencies: ["SwiftySites"]),
+            dependencies: [.product(name: "SwiftySites", package: "swiftysites")]),
+            
         …
     ]
     …
