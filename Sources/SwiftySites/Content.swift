@@ -19,6 +19,6 @@ public extension Content { // Default protocol implementation
     }
 
     var html: String {
-        markdown.markdownToHTML()
+        GFMarkdown(markdown).toHTML()
     }
 }
