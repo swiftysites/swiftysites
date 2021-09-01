@@ -1,6 +1,4 @@
 // swift-tools-version:5.5
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
 import PackageDescription
 
 let package = Package(
@@ -11,7 +9,9 @@ let package = Package(
             name: "SwiftySites",
             targets: ["SwiftySites"]),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.4.4")),
+    ],
     targets: [
         .binaryTarget(
             name: "CMarkGFM",
@@ -19,12 +19,12 @@ let package = Package(
             checksum: "a2638dfb0d52990788143e7bbe9fdc4de1eb0153a9830a208d951720d3a4b75f"),
         .target(
             name: "SwiftySites",
-            dependencies: ["CMarkGFM"]),
+            dependencies: [
+                "CMarkGFM",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]),
         .testTarget(
             name: "SwiftySitesTests",
-            dependencies: ["SwiftySites"]),
-        .target(
-            name: "Samples",
-            dependencies: ["SwiftySites"]),
+            dependencies: ["SwiftySites"])
     ]
 )

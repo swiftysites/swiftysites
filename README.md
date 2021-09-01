@@ -47,7 +47,6 @@ import Foundation
 import SwiftySites
 
 let homePage = Page(
-    globalTemplateOnly: true,
     file: URL(fileURLWithPath: "/"),
     title: "Home Page",
     markdown: """
@@ -66,13 +65,13 @@ And some templates.
 cat >> Sources/MySite/homeTemplate.swift << EOF
 import SwiftySites
 
-let homeTemplate = BasicSite.GlobalTemplate(match: #"/"#, suffix: "html") { site, page, _ in
+let homeTemplate = BasicSite.templateA(match: #"/"#, suffix: "html") { site, page in
     """
     <html>
-    <head><title>\(page!.title)</title></head>
+    <head><title>\(page.title)</title></head>
     <body>
         <div>
-            \(page!.html)
+            \(page.html)
         </div>
     </body>
     </html>
@@ -90,12 +89,9 @@ cat >> Sources/MySite/main.swift << EOF
 import SwiftySites
 
 BasicSite(
-    config: .init(title: "My Site"),
+    SiteConfig(title: "My Site"),
     contentA: [homePage],
-    contentB: [],
-    globalTemplates: [homeTemplate],
-    templatesA: [],
-    templatesB: []
+    templates: [homeTemplate]
 ).render()
 EOF
 ```

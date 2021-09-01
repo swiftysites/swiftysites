@@ -1,2 +1,2 @@
-public typealias BasicSite = Site<Page, Never>
-public typealias BlogSite = Site<Page, Post>
+public typealias BasicSite = SiteA<Page>
+public typealias BasicBlog = SiteB<Page, Post>

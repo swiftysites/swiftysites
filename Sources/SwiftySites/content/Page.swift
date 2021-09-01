@@ -1,15 +1,19 @@
 import Foundation
 
 public struct Page: Content {
-    public let globalTemplateOnly: Bool
     public let file: URL
     public let title: String
     public let markdown: String
 
-    public init(globalTemplateOnly: Bool = false, file: URL, title: String, markdown: String) {
-        self.globalTemplateOnly = globalTemplateOnly
-        self.file = file
+    /// Default initializer.
+    public init(path: String, title: String, markdown: String) {
+        self.file = URL(fileURLWithPath: path)
         self.title = title
         self.markdown = markdown
+    }
+
+    /// Short-form initializer.
+    public init(_ path: String, _ title: String, markdown: () -> String) {
+        self.init(path: path, title: title, markdown: markdown())
     }
 }

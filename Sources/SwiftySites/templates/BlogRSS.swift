@@ -1,7 +1,7 @@
-public let rssTemplate = BlogSite.GlobalTemplate(match: #"/"#, suffix: "xml") { site, page, _ in
+public let rssTemplate = BasicBlog.templateA(#"^/$"#, suffix: "xml") { site, page in
     """
     <div>
-    \(page!.markdown)
+    \(page.markdown)
     \(site.contentA.reduce("") {
         """
         \($0)
