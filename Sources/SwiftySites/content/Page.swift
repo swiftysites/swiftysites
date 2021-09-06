@@ -1,19 +1,29 @@
 import Foundation
 
+/// A content type representing a regular page.
 public struct Page: Content {
-    public let file: URL
+
+    /// The path of this content item.
+    public let path: String
+
+    /// The post's display title.
     public let title: String
-    public let markdown: String
 
-    /// Default initializer.
-    public init(path: String, title: String, markdown: String) {
-        self.file = URL(fileURLWithPath: path)
-        self.title = title
-        self.markdown = markdown
-    }
+    /// The Markdown/HTML content of this page.
+    ///
+    /// Initialize this variable with Markdown code. When accessing this property the corresponding HTML will be returned.
+    /// Use `$content` to get back the original value before converting.
+    ///
+    @Markdown public private(set) var content: String
+}
 
-    /// Short-form initializer.
-    public init(_ path: String, _ title: String, markdown: () -> String) {
-        self.init(path: path, title: title, markdown: markdown())
+public extension Page {
+
+    /// Concisely initialize a page.
+    ///
+    /// Use a trailing closure to improve readability.
+    ///
+    init(_ path: String, _ title: String, content: () -> String) {
+        self.init(path: path, title: title, content: content())
     }
 }

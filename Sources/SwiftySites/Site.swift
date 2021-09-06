@@ -11,31 +11,24 @@ import Foundation
 /// typealias MySite = SiteB<Page, Post>
 /// ```
 ///
-public struct Site<A: Content, B: Content> {
+public struct Site<A: Content, B: Content, C: Content, D: Content, E: Content> {
 
     /// The site's configuration parameters.
     public let config: SiteConfig
 
     /// Content instances for the corresponding content type.
-    public let contentA: [A], contentB: [B]
+    ///
+    /// You can specify up to five content types.
+    ///
+    public internal(set) var contentA: [A], contentB: [B], contentC: [C], contentD: [D], contentE: [E]
 
     /// Templates to be applied to content.
     let templates: [Template]
+}
 
-    /// Default and only initializer to crete _Site_ instances.
-    public init(
-        _ config: SiteConfig,
-        contentA: [A],
-        contentB: [B] = [],
-        templates: [Template]
-    ) {
-        self.config = config
-        self.contentA = contentA
-        self.contentB = contentB
-        self.templates = templates
-    }
+private extension Site {
 
-    private func write(_ string: String, _ file: URL) {
+    func write(_ string: String, _ file: URL) {
         let currentFolder = Self.currentFolder
         let wwwFolder = currentFolder.appendingPathComponent("www")
         let newFile = wwwFolder.appendingPathComponent(file.relativePath)
@@ -52,7 +45,7 @@ public struct Site<A: Content, B: Content> {
         }
     }
 
-    private static func findAncestor(containing markerFile: String, from startingUrl: URL) -> URL? {
+    static func findAncestor(containing markerFile: String, from startingUrl: URL) -> URL? {
         let markerURL = startingUrl.appendingPathComponent(markerFile)
         if FileManager.default.fileExists(atPath: markerURL.path) {
             return startingUrl
@@ -63,24 +56,28 @@ public struct Site<A: Content, B: Content> {
         }
     }
 
-    private static var currentFolder: URL {
+    static var currentFolder: URL {
         let fm = FileManager.default
         let workingDirectory = URL(fileURLWithPath: fm.currentDirectoryPath)
         return findAncestor(containing: "Package.swift", from: workingDirectory) ?? workingDirectory
     }
 
     /// Copies over the contents of the static folder.
-    private func cleanWWW() {
+    func cleanWWW() {
+        let fm = FileManager.default
         let wwwFolder = Self.currentFolder.appendingPathComponent("www")
+        guard fm.fileExists(atPath: wwwFolder.path) else {
+            return
+        }
         do {
-            try FileManager.default.removeItem(at: wwwFolder)
+            try fm.removeItem(at: wwwFolder)
         } catch {
             fatalError("Could not remove '\(wwwFolder.path)'.")
         }
     }
 
     /// Copies over the contents of the static folder.
-    private func syncStatic() {
+    func syncStatic() {
         let fm = FileManager.default
         let currentFolder = Self.currentFolder
         let wwwFolder = currentFolder.appendingPathComponent("www")
@@ -123,22 +120,28 @@ public struct Site<A: Content, B: Content> {
         }
     }
 
-    func render<C: Content>(_ content: [C], files: inout [URL]) {
+    func render<Z: Content>(_ content: [Z], files: inout [URL]) {
         content
         .forEach { content in
             templates
             .filter {
-                (C.self == A.self && $0.applyA != nil) || (C.self == B.self && $0.applyB != nil)
+                (Z.self == A.self && $0.applyA != nil) ||
+                (Z.self == B.self && $0.applyB != nil) ||
+                (Z.self == C.self && $0.applyC != nil) ||
+                (Z.self == D.self && $0.applyD != nil) ||
+                (Z.self == E.self && $0.applyE != nil)
             }
-            .filter { content.file.path.matchesExactly($0.match) }
+            .filter {
+                content.path.matchesExactly($0.match)
+            }
             .filter {
                 guard let exclude = $0.exclude else {
                     return true
                 }
-                return !content.file.path.matchesExactly(exclude)
+                return !content.path.matchesExactly(exclude)
             }
             .forEach { template in
-                let fileWithoutExt = content.file.deletingPathExtension()
+                let fileWithoutExt = URL(fileURLWithPath: content.path).deletingPathExtension()
                 let fileWithIndex: URL
                 if let index = template.index {
                     fileWithIndex = fileWithoutExt.appendingPathComponent(index)
@@ -156,7 +159,7 @@ public struct Site<A: Content, B: Content> {
                     newFile = fileWithIndex
                 }
 
-                let originalMapFile = config.baseURL.appendingPathComponent(newFile.path)
+                let originalMapFile = config.url.appendingPathComponent(newFile.path)
                 let mapFile: URL
                 if originalMapFile.lastPathComponent == "\(Template.defaultIndex).\(Template.defaultSuffix)" {
                     // Correct all index.html
@@ -168,17 +171,100 @@ public struct Site<A: Content, B: Content> {
                     files.append(mapFile)
                 }
 
-                let output = C.self == A.self
+                let output = Z.self == A.self
                     ? template.applyA!(self, content as! A)
-                    : template.applyB!(self, content as! B)
+                    : Z.self == B.self
+                    ? template.applyB!(self, content as! B)
+                    : Z.self == C.self
+                    ? template.applyC!(self, content as! C)
+                    : Z.self == D.self
+                    ? template.applyD!(self, content as! D)
+                    : template.applyE!(self, content as! E)
+
                 write(output, newFile)
                 // TODO: check if we are replacing a directory with a file, in which case we need to manually delete beforehand
             }
         }
     }
+}
+
+public extension Site {
+
+    /// Use to test regular expresions against path strings.
+    ///
+    /// Returns whether the regular expression matches the path exactly.
+    ///
+    /// - Parameters:
+    ///   - path: The path that the regular expression will be tested against.
+    ///   - regex: A regular expression to be matched against the entirety of the path.
+    ///
+    /// Example.
+    ///
+    /// ```swift
+    /// Site.matches(path: "/tag/programming", regex: #"/tag/\w*"#) // true
+    /// ```
+    ///
+    static func matches(path: String, regex: String) -> Bool {
+        path.matchesExactly(regex)
+    }
+
+    /// Default and only initializer to create _Site_ instances.
+    ///
+    /// - Parameters:
+    ///   - config: Your site's configuration object.
+    ///   - contentA: Initial items of your first content type.
+    ///   - contentB: Initial items of your second content type.
+    ///   - contentC: Initial items of your third content type.
+    ///   - contentD: Initial items of your fourth content type.
+    ///   - contentE: Initial items of your fifth content type.
+    ///   - templates: Templates will be applied at render time.
+    ///   - generators: Generators are applied during initialization and the generated content will be appended to the user-specified content.
+    ///
+    init(
+        _ config: SiteConfig,
+        contentA: [A],
+        contentB: [B] = [],
+        contentC: [C] = [],
+        contentD: [D] = [],
+        contentE: [E] = [],
+        templates: [Template],
+        generators: [Generator] = []
+    ) {
+        self.init(
+            config: config,
+            contentA: contentA,
+            contentB: contentB,
+            contentC: contentC,
+            contentD: contentD,
+            contentE: contentE,
+            templates: templates
+        )
+
+        generators.forEach {
+            if let generate = $0.generateA {
+                self.contentA += generate(self)
+            } else if let generate = $0.generateB {
+                self.contentB += generate(self)
+            } else if let generate = $0.generateC {
+                self.contentC += generate(self)
+            } else if let generate = $0.generateD {
+                self.contentD += generate(self)
+            } else if let generate = $0.generateE {
+                self.contentE += generate(self)
+            }
+        }
+    }
+
+    /// The site's build date formatted for use in an RSS feed.
+    var buildDate: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US")
+        dateFormatter.dateFormat = "EEE, dd MMM yyyy HH:mm:ss ZZZ"
+        return dateFormatter.string(from: Date()) // // Mon, 02 Jan 2006 15:04:05 -0700
+    }
 
     /// Generate the static site writing the output to the _www_ folder.
-    @discardableResult public func render(clean: Bool? = nil, skipSitemap: Bool? = nil) -> SiteMap {
+    @discardableResult func render(clean: Bool? = nil, skipSitemap: Bool? = nil) -> SiteMap {
 
         let options = RenderCommand.parseOrExit()
         let clean = clean ?? options.clean
@@ -189,11 +275,13 @@ public struct Site<A: Content, B: Content> {
         if clean {
             cleanWWW()
         }
-
         syncStatic()
 
         render(contentA, files: &sitemapUrls)
         render(contentB, files: &sitemapUrls)
+        render(contentC, files: &sitemapUrls)
+        render(contentD, files: &sitemapUrls)
+        render(contentE, files: &sitemapUrls)
 
         let sitemap = SiteMap(urls: sitemapUrls, generatesSitemapFile: !skipSitemap)
 
@@ -204,23 +292,3 @@ public struct Site<A: Content, B: Content> {
         return sitemap
     }
 }
-
-/// Use to define a site type with only one content type.
-///
-/// Example:
-///
-/// ```swift
-/// typealias MySite = SiteA<Page>
-/// ```
-///
-public typealias SiteA<A: Content> = Site<A, Never>
-
-/// Use to define a site type with two content type.
-///
-/// Example:
-///
-/// ```swift
-/// typealias MySite = SiteB<Page, Post>
-/// ```
-///
-public typealias SiteB<A: Content, B: Content> = Site<A, B>

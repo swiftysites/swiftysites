@@ -1,11 +1,8 @@
-import Foundation
-
+/// Makes `Never` conform with the ``Content`` protocol.
 extension Never: Content {
-    public var file: URL {
-        fatalError()
-    }
-    
-    public var markdown: String {
+
+    /// Compliance with the ``Content`` protocol.
+    public var path: String {
         fatalError()
     }
 }

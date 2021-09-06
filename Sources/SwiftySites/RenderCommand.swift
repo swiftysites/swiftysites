@@ -1,5 +1,6 @@
 import ArgumentParser
 
+/// A `ParsableCommand` containing all available command-line options.
 struct RenderCommand: ParsableCommand {
     static var configuration = CommandConfiguration(
         commandName: "swift run",

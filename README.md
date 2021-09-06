@@ -71,7 +71,7 @@ let homeTemplate = BasicSite.templateA(match: #"/"#, suffix: "html") { site, pag
     <head><title>\(page.title)</title></head>
     <body>
         <div>
-            \(page.html)
+            \(page.content)
         </div>
     </body>
     </html>
