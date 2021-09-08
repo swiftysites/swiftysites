@@ -1,2 +1,2 @@
-/// A basic blog definition with regular pages, posts and support for tags.
-public typealias BasicBlog = SiteC<Page, Post, TagPage>
+/// A basic blog definition with regular pages and posts.
+public typealias BasicBlog = SiteB<Page, Post>

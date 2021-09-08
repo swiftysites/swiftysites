@@ -17,6 +17,9 @@ struct RenderCommand: ParsableCommand {
     @Flag(name: .shortAndLong, help: "Clears the 'www' folder before rendering.")
     var clean = false
 
-    @Flag(name: .shortAndLong, help: "Avoids generating a 'sitemap.xml' file at the root.")
+    @Flag(name: .long, help: "Avoids copying files from the 'static' folder and into the 'www' folder.")
+    var skipStatic = false
+
+    @Flag(name: .long, help: "Avoids generating a 'sitemap.xml' file at the root.")
     var skipSitemap = false
 }

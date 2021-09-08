@@ -264,18 +264,32 @@ public extension Site {
     }
 
     /// Generate the static site writing the output to the _www_ folder.
-    @discardableResult func render(clean: Bool? = nil, skipSitemap: Bool? = nil) -> SiteMap {
+    ///
+    /// All parameters can also be specified as command-line arguments. The function's explicit parameters take precedence over values specified on the command line.
+    ///
+    /// Invoke your executable with `swift run MySite --help` for a list of available flags.
+    ///
+    /// - Parameters:
+    ///  - clean: Deletes the `www` folder entirely before rendering. Defaults to false (will not delete the `www` folder).
+    ///  - skipSitemap: Does not generate a sitemap file. Defaults to false (will generate a sitemap).
+    ///  - skipStatic: Avoids copying the contents of the `static` folder into the `www` folder. Defaults to false (will copy static).
+    ///  
+    @discardableResult func render(clean: Bool? = nil, skipSitemap: Bool? = nil, skipStatic: Bool? = nil) -> SiteMap {
 
         let options = RenderCommand.parseOrExit()
         let clean = clean ?? options.clean
         let skipSitemap = skipSitemap ?? options.skipSitemap
+        let skipStatic = skipStatic ?? options.skipStatic
 
         var sitemapUrls = [URL]()
 
         if clean {
             cleanWWW()
         }
-        syncStatic()
+
+        if !skipStatic {
+            syncStatic()
+        }
 
         render(contentA, files: &sitemapUrls)
         render(contentB, files: &sitemapUrls)
