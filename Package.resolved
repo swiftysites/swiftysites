@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "GFMarkdown",
+        "repositoryURL": "https://github.com/swiftysites/gfmarkdown",
+        "state": {
+          "branch": "1.0.1",
+          "revision": "3e44a4c01819a588c12190eee8134477f150392a",
+          "version": null
+        }
+      },
+      {
         "package": "swift-argument-parser",
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {

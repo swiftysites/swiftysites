@@ -31,7 +31,7 @@ private extension Site {
     func write(_ string: String, _ file: URL) {
         let currentFolder = Self.currentFolder
         let wwwFolder = currentFolder.appendingPathComponent("www")
-        let newFile = wwwFolder.appendingPathComponent(file.relativePath)
+        let newFile = wwwFolder.appendingPathComponent(file.relativePath) // TODO: Try `file.path` instead.
         let newDir = newFile.deletingLastPathComponent()
         do {
             try FileManager.default.createDirectory(at: newDir, withIntermediateDirectories: true)
@@ -84,20 +84,37 @@ private extension Site {
         let staticFolder = currentFolder.appendingPathComponent("static")
 
         var contents = [URL]()
-        guard let enumerator = fm.enumerator(at: staticFolder, includingPropertiesForKeys: [.isRegularFileKey], options: [.producesRelativePathURLs, .skipsHiddenFiles]) else {
+        guard let enumerator = fm.enumerator(
+            at: staticFolder,
+            includingPropertiesForKeys: [
+                // .isRegularFileKey, // Does not work on Linux.
+                .isDirectoryKey
+            ],
+            options: [
+                // .producesRelativePathURLs, // Does not work on Linux.
+                .skipsHiddenFiles
+            ]
+        ) else {
             fatalError()
         }
+
         for case let url as URL in enumerator {
-            guard let attributes = try? url.resourceValues(forKeys: [.isRegularFileKey]), let isRegularFile = attributes.isRegularFile else {
+            guard let attributes = try? url.resourceValues(forKeys: [.isDirectoryKey]), let isDirectory = attributes.isDirectory else {
                 fatalError()
             }
-            if isRegularFile {
-                contents.append(url)
+
+            if !isDirectory {
+                // This is to work around not having `.producesRelativePathURLs` on Linux.
+                let relativePath = url.pathComponents.suffix(from: staticFolder.pathComponents.count).joined(separator: "/")
+                let relativeURL = URL(fileURLWithPath: relativePath, relativeTo: staticFolder)
+
+                // Append relative URL
+                contents.append(relativeURL)
             }
         }
 
-        contents.forEach { content in
-            let destination = wwwFolder.appendingPathComponent(content.relativePath)
+        contents.forEach { source in
+            let destination = wwwFolder.appendingPathComponent(source.relativePath)
             let newDir = destination.deletingLastPathComponent()
             do {
                 try fm.createDirectory(at: newDir, withIntermediateDirectories: true)
@@ -113,7 +130,7 @@ private extension Site {
                 }
             }
 
-            let source = URL(fileURLWithPath: content.path)
+            //let source = URL(fileURLWithPath: content.path)
             guard let _ = try? fm.copyItem(at: source, to: destination) else {
                 fatalError("Could not copy file at '\(source.path)' to '\(destination.path)'.")
             }

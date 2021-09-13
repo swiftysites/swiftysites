@@ -1,16 +1,28 @@
-import CMarkGFM
+import GFMarkdown
 
 /// Property wrapper to turn any Markdown variable into HTML.
+///
+/// Basic usage.
+///
+/// ```swift
+/// @Markdown var content = "# Hello"
+///
+/// // Automatic HTML conversion.
+/// print(content) // "<h1>Hello</h1>"
+///
+/// // Maintain access to original Markdown.
+/// print($content) // "# Hello"
+/// ```
+///
 @propertyWrapper public struct Markdown {
 
-    /// Converts Markdown to HTML.
-    ///
-    /// CMark options: `validateUTF8`, `unsafe`.
-    /// GFM extensions: `tagfilter`, `autolink`, `strikethrough`, `table`, `tasklist`.
-    ///
-    static func convert(_ value: String) -> String {
-        GFMarkdown(value).toHTML(options: [.validateUTF8, .unsafe], extensions: [.tagfilter, .autolink, .strikethrough, .table, .tasklist])
+    /// Converts to HTML using `GFMarkdown/MarkdownString``.
+    private static func toHTML(_ value: String) -> String {
+        MarkdownString(value).toHTML(options: [.validateUTF8, .unsafe], extensions: [.tagfilter, .autolink, .strikethrough, .table, .tasklist])
     }
+
+    /// The converted HTML value accessible through the wrappedValue property.
+    private var html: String
 
     /// Access the original value before conversion by prefixing the property name with `$`.
     ///
@@ -31,16 +43,21 @@ import CMarkGFM
     /// The HTML translation of the original Markdown value.
     public var wrappedValue: String {
 
+        /// HTML value.
+        get {
+            html
+        }
+
         /// Applies the Markdown conversion and saves the original value.
-        didSet {
-            projectedValue = wrappedValue
-            self.wrappedValue = Self.convert(wrappedValue)
+        set {
+            projectedValue = newValue
+            html = Self.toHTML(newValue)
         }
     }
 
     /// Applies the Markdown conversion and saves the original value.
     public init(wrappedValue: String) {
         projectedValue = wrappedValue
-        self.wrappedValue = Self.convert(wrappedValue)
+        html = Self.toHTML(wrappedValue)
     }
 }
