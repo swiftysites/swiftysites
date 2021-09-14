@@ -18,7 +18,7 @@ let pageTemplate = BasicBlog.templateA(exclude: #"(/)|(/posts)"#) { site, page i
 """ ) }
 ```
 
-Include all content templates when calling ``Site/init(_:contentA:contentB:contentC:contentD:contentE:templates:generators:)``. The templates will only be applied when calling ``Site/render(clean:skipSitemap:)``.
+Include all content templates when calling ``Site/init(_:contentA:contentB:contentC:contentD:contentE:templates:generators:)``. The templates will only be applied when calling ``Site/render(clean:skipSitemap:skipStatic:)``.
 
 ## Layout templates
 

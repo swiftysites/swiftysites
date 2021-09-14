@@ -49,7 +49,7 @@ extension Site {
     /// """ }
     /// ```
     ///
-    /// See ``<doc:Template>`` for more elaborate examples and explanations.
+    /// See <doc:Template> for more elaborate examples and explanations.
     ///
     public static func templateA(_ match: String = Template.defaultMatch, exclude: String? = .none, index: String? = Template.defaultIndex, suffix: String? = Template.defaultSuffix, apply: @escaping (Site, A) -> String) -> Template {
         Template(match: match, exclude: exclude, index: index, suffix: suffix, applyA: apply, applyB: .none, applyC: .none, applyD: .none, applyE: .none)

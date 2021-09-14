@@ -28,7 +28,7 @@ swift run -c release
 swift run -c release MySite --clean
 ```
 
-Options passed directly to ``Site/render(clean:skipSitemap:)`` method override those specified on the command line.
+Options passed directly to ``Site/render(clean:skipSitemap:skipStatic:)`` method override those specified on the command line.
 
 To get all available options.
 

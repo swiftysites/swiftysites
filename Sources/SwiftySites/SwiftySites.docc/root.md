@@ -11,7 +11,7 @@ The ``SwiftySites`` Framework is the main entry point to generating static sites
 Available frameworks and tools.
 
 - ``SwiftySites`` - static site generator framework
-- [CMarkGFM](/documentation/cmarkgfm/) - CommonMark / GitHub Flavored Markdown to HTML conversion
+- [GFMarkdown](/documentation/gfmarkdown/) - CommonMark / GitHub Flavored Markdown to HTML conversion
 
 ## Topics
 
