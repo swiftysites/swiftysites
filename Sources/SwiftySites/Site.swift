@@ -92,7 +92,6 @@ private extension Site {
             ],
             options: [
                 // .producesRelativePathURLs, // Does not work on Linux.
-                .skipsHiddenFiles
             ]
         ) else {
             fatalError()
