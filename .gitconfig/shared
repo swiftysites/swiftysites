@@ -17,7 +17,10 @@
 #     gpg --output .gitconfig/users/[USER].gpg --encrypt --recipient [USER] .gitconfig/user
 #
 
+[remote "backup"]
+    url = github.com:diegolavalledev/diegolavalle-website
+    fetch = +refs/heads/*:refs/remotes/backup/*
 [commit]
-	gpgsign = true
+    gpgsign = true
 [include]
-  path = user
+    path = user

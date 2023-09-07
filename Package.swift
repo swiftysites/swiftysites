@@ -1,17 +1,17 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
     name: "SwiftySites",
-    platforms: [.macOS(.v11)],
+    platforms: [.macOS(.v13)],
     products: [
         .library(
             name: "SwiftySites",
             targets: ["SwiftySites"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.4.4")),
-        .package(url: "https://github.com/swiftysites/gfmarkdown", .revision("1.0.2"))
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),
+        .package(url: "https://github.com/swiftysites/gfmarkdown", branch: "release")
     ],
     targets: [
         .target(
