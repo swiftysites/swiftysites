@@ -1,34 +1,23 @@
-extension Site {
+import Foundation
 
-    /// A template for site content.
-    public struct Template {
+/// A template for site content.
+public struct Template<C: Content> {
     
-        /// By default the template matches all content of one specific type.
-        public static var defaultMatch: String {
-            #"^.*$"#
-        }
-
-        /// By default the template produces a file named `index` with the corresponding extension.
-        public static var defaultIndex: String {
-            "index"
-        }
-
-        /// By default the template produces a file with the `html` extension.
-        public static var defaultSuffix: String {
-            "html"
-        }
-
-        let match: String
-        let exclude: String?
-        let index: String?
-        let suffix: String?
-        let applyA: ((Site, A) -> String)?
-        let applyB: ((Site, B) -> String)?
-        let applyC: ((Site, C) -> String)?
-        let applyD: ((Site, D) -> String)?
-        let applyE: ((Site, E) -> String)?
+    /// By default the template matches all content of one specific type.
+    public static var defaultMatch: Regex<Substring> {
+        #/^.*$/#
     }
-
+    
+    /// By default the template produces a file named `index` with the corresponding extension.
+    public static var defaultIndex: String {
+        "index"
+    }
+    
+    /// By default the template produces a file with the `html` extension.
+    public static var defaultSuffix: String {
+        "html"
+    }
+    
     /// Defines a template for the first content type.
     ///
     /// - Parameters:
@@ -51,39 +40,67 @@ extension Site {
     ///
     /// See <doc:Template> for more elaborate examples and explanations.
     ///
-    public static func templateA(_ match: String = Template.defaultMatch, exclude: String? = .none, index: String? = Template.defaultIndex, suffix: String? = Template.defaultSuffix, apply: @escaping (Site, A) -> String) -> Template {
-        Template(match: match, exclude: exclude, index: index, suffix: suffix, applyA: apply, applyB: .none, applyC: .none, applyD: .none, applyE: .none)
+    public init(_ match: Regex<Substring> = Template.defaultMatch, exclude: Regex<Substring>? = .none, index: String? = Template.defaultIndex, suffix: String? = Template.defaultSuffix, apply: @escaping (C) -> String) {
+        self.match = match
+        self.exclude = exclude
+        self.index = index
+        self.suffix = suffix
+        self.apply = apply
     }
 
-    /// Defines a template for the second content type.
-    ///
-    /// See ``templateA(_:exclude:index:suffix:apply:)`` for a description of each parameter.
-    ///
-    public static func templateB(_ match: String = Template.defaultMatch, exclude: String? = .none, index: String? = Template.defaultIndex, suffix: String = Template.defaultSuffix, apply: @escaping (Site, B) -> String) -> Template {
-        Template(match: match, exclude: exclude, index: index, suffix: suffix, applyA: .none, applyB: apply, applyC: .none, applyD: .none, applyE: .none)
+    let match: Regex<Substring>
+    let exclude: Regex<Substring>?
+    let index: String?
+    let suffix: String?
+    
+    // let pattern: any RegexComponent
+    let apply: (C) -> String
+
+    func apply(_ contentItems: [C], baseURL: URL) -> [URL] {
+        contentItems.compactMap { contentItem in
+            apply(contentItem, baseURL: baseURL)
+        }
     }
 
-    /// Defines a template for the third content type.
-    ///
-    /// See ``templateA(_:exclude:index:suffix:apply:)`` for a description of each parameter.
-    ///
-    public static func templateC(_ match: String = Template.defaultMatch, exclude: String? = .none, index: String? = Template.defaultIndex, suffix: String = Template.defaultSuffix, apply: @escaping (Site, C) -> String) -> Template {
-        Template(match: match, exclude: exclude, index: index, suffix: suffix, applyA: .none, applyB: .none, applyC: apply, applyD: .none, applyE: .none)
-    }
+    func apply(_ content: C, baseURL: URL) -> URL? {
+        if content.path.wholeMatch(of: match) == nil {
+            return nil
+        }
+        if let exclude, content.path.wholeMatch(of: exclude) != nil {
+            return nil
+        }
+        let fileWithoutExt = URL(fileURLWithPath: content.path).deletingPathExtension()
+        let fileWithIndex: URL
+        if let index = index {
+            fileWithIndex = fileWithoutExt.appendingPathComponent(index)
+        } else {
+            if fileWithoutExt.pathComponents.count > 1 {
+                fileWithIndex = fileWithoutExt
+            } else {
+                fileWithIndex = fileWithoutExt.appendingPathComponent(Template.defaultIndex).appendingPathExtension(Template.defaultSuffix)
+            }
+        }
+        let newFile: URL
+        if let suffix = suffix {
+            newFile = fileWithIndex.appendingPathExtension(suffix)
+        } else {
+            newFile = fileWithIndex
+        }
 
-    /// Defines a template for the fourth content type.
-    ///
-    /// See ``templateA(_:exclude:index:suffix:apply:)`` for a description of each parameter.
-    ///
-    public static func templateD(_ match: String = Template.defaultMatch, exclude: String? = .none, index: String? = Template.defaultIndex, suffix: String = Template.defaultSuffix, apply: @escaping (Site, D) -> String) -> Template {
-        Template(match: match, exclude: exclude, index: index, suffix: suffix, applyA: .none, applyB: .none, applyC: .none, applyD: apply, applyE: .none)
-    }
+        let originalMapFile = baseURL.appendingPathComponent(newFile.path)
+        let mapFile: URL
+        if originalMapFile.lastPathComponent == "\(Template.defaultIndex).\(Template.defaultSuffix)" {
+            // Correct all index.html
+            mapFile = originalMapFile.deletingLastPathComponent()
+        } else {
+            mapFile = originalMapFile
+        }
 
-    /// Defines a template for the fifth content type.
-    ///
-    /// See ``templateA(_:exclude:index:suffix:apply:)`` for a description of each parameter.
-    ///
-    public static func templateE(_ match: String = Template.defaultMatch, exclude: String? = .none, index: String? = Template.defaultIndex, suffix: String = Template.defaultSuffix, apply: @escaping (Site, E) -> String) -> Template {
-        Template(match: match, exclude: exclude, index: index, suffix: suffix, applyA: .none, applyB: .none, applyC: .none, applyD: .none, applyE: apply)
+        let output = apply(content)
+
+        writeFile(output, newFile)
+        // TODO: check if we are replacing a directory with a file, in which case we need to manually delete beforehand
+        
+        return mapFile // TODO: Eliminate duplicates
     }
 }

@@ -113,3 +113,17 @@ python -m http.server --directory www
 ```
 
 Direct your browser to http://localhost:8000/index.html to see your site.
+
+# Contributing
+
+## Generate DocC
+
+Use the following command:
+
+```sh
+swift package --allow-writing-to-directory [output-directory-path] \ 
+    generate-documentation --target [target-name] --disable-indexing \
+    --output-path [output-directory-path] \
+    --transform-for-static-hosting \
+    --hosting-base-path [hosting-base-path]
+```
