@@ -18,7 +18,7 @@
 #
 
 [remote "backup"]
-    url = github.com:diegolavalledev/diegolavalle-website
+    url = github.com:diegolavalledev/swiftysites
     fetch = +refs/heads/*:refs/remotes/backup/*
 [commit]
     gpgsign = true
