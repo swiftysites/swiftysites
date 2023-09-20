@@ -1,7 +1,4 @@
-/// A content type that represents an individual tag.
-///
-/// Use a ``Site/Generator`` to produce a `TagPage` content item for each available tag. Match with a ``Site/Template`` to list all posts tagged with the specific term.
-///
+/// A content type that represents a listing of articles under a particular tag.
 public struct TagPage: Content {
     public let path: String
     public let tag: String

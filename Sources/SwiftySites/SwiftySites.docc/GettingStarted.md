@@ -1,6 +1,14 @@
 # Getting Started
 
-In SwiftySites you define your website within a Swift project. All your content metadata is made out of custom native types while the content itself may be specified on Markdown or HTML. Templates use string interpolation to produce web pages from your content and it all gets tied together when calling your site type's initializer.
+With SwiftySites you define your website in a Swift Package. The package needs to contain an executable target which will depend on the SwiftySites library.
+
+When you declare your site you provide:
+
+- A configuration containing your site's metadate like title and copyright notice.
+- All of the content instances grouped by type. Each type may specify arbitrary metadata as well as markdown content.
+- The templates to be applied to content instances to generate output like HTML.
+
+When your executable runs, it will call the site's render method which will produce all of the static site's files.
 
 ## Using Xcode
 

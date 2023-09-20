@@ -2,7 +2,7 @@
 
 Use templates to transform content items into the outputs that make up your website.
 
-You create ``Site/Template`` instances using the ``Site/templateA(_:exclude:index:suffix:apply:)`` family of functions.
+You create ``Template`` instances using the ``Template/init(_:exclude:index:suffix:apply:)`` initializer while providing an associated content type.
 
 ## Content templates
 
@@ -11,14 +11,14 @@ Match a specific content type and produce an entry point for a site.
 Example.
 
 ```swift
-let pageTemplate = BasicBlog.templateA(exclude: #"(/)|(/posts)"#) { site, page in baseLayout(site: site, page: page, main: """
+let pageTemplate = Template(exclude: #"(/)|(/posts)"#) { (page: Page) in baseLayout(site: site, page: page, main: """
 <main>
     \(page.content)
 </main>
 """ ) }
 ```
 
-Include all content templates when calling ``Site/init(_:contentA:contentB:contentC:contentD:contentE:templates:generators:)``. The templates will only be applied when calling ``Site/render(clean:skipSitemap:skipStatic:)``.
+Include all content templates when calling ``Site/init(_:content:template:)``. The templates will only be applied when calling ``Site/render(clean:skipSitemap:skipStatic:)``.
 
 ## Layout templates
 
@@ -52,7 +52,7 @@ func baseLayout (site: BasicBlog, page: Page? = nil, post: Post? = nil, tagPage:
 Usage.
 
 ```swift
-let postsSectionTemplate = BasicBlog.templateA("/posts") { site, page in baseLayout(site: site, page: page, main: """
+let postsSectionTemplate = Template("/posts") { (page: Page) in baseLayout(site: site, page: page, main: """
 <main>
     \(page.content)
     <hr />

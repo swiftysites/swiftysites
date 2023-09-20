@@ -16,20 +16,15 @@ _SwiftySites_ let's you create a website entirely in Swift and export it as plai
 
 ### Specifying content
 
+- ``Content``
 - ``Page``
 - ``Post``
-- ``Content``
 
 ### Defining content templates
 
-- ``Site/Template``
+- ``Template``
 
 ### Declaring a site
 
-- ``BasicSite``
-- ``BasicBlog``
 - ``SiteConfig``
-- ``Site/init(_:contentA:contentB:contentC:contentD:contentE:templates:generators:)``
-- ``SiteA``
-- ``SiteB``
-- ``Site``
+- ``Site/init(_:content:template:)``

@@ -1,30 +1,13 @@
 import Foundation
 
 /// Defines a site in terms of its content types.
-///
-/// Rather than using this struct directly to use one of the its aliases like ``BasicSite`` or ``BasicBlog``.
-/// Or create your own custom alias based on the multi-content aliases like ``SiteA`` or ``SiteB``.
-///
-/// Example:
-///
-/// ```swift
-/// typealias MySite = SiteB<Page, Post>
-/// ```
-///
 public struct Site<each C: Content> {
-
-    /// Default and only initializer to create _Site_ instances.
-    ///
+ 
+    /// Creates an instance of Site from a set of content elements and templates. The initializer also requires a site configuration.
     /// - Parameters:
-    ///   - config: Your site's configuration object.
-    ///   - contentA: Initial items of your first content type.
-    ///   - contentB: Initial items of your second content type.
-    ///   - contentC: Initial items of your third content type.
-    ///   - contentD: Initial items of your fourth content type.
-    ///   - contentE: Initial items of your fifth content type.
-    ///   - templates: Templates will be applied at render time.
-    ///   - generators: Generators are applied during initialization and the generated content will be appended to the user-specified content.
-    ///
+    ///   - config: The site's configuration.
+    ///   - content: Multiple arrays of related content. Usually one array per content type.
+    ///   - template: Multiple arrays of templates for each content group.
     public init(_ config: SiteConfig, content: (repeat [(each C)]), template: (repeat [Template<each C>])) {
         self.config = config
         self.content = content
@@ -34,13 +17,10 @@ public struct Site<each C: Content> {
     /// The site's configuration parameters.
     public let config: SiteConfig
 
-    /// Content instances for the corresponding content type.
-    ///
-    /// You can specify up to five content types.
-    ///
+    /// Content groups. Each group correspond to a specific content type.
     public let content: (repeat [(each C)])
 
-    /// Templates to be applied to content.
+    /// Template groups. Each template group is applied to the corresponding content group.
     public let template: (repeat [Template<each C>])
 
     /// Generate the static site writing the output to the _www_ folder.

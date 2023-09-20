@@ -1,9 +1,7 @@
 import Foundation
 
-/// Value type encapsulating all static site configuration.
-///
-/// This structure can be easilly passed down to fragment/layout templates since it does not depend on a specific``Site`` specialization.
-///
+/// Global site configuration including metadata like language and description.
+/// It also contains options affecting the behavior of the site such as the base URL for development and production deployments.
 public struct SiteConfig {
 
     /// The default language code: English (US).

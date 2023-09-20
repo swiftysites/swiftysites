@@ -9,8 +9,8 @@ swift package --allow-writing-to-directory .build generate-documentation --targe
 
 swift package --allow-writing-to-directory .build generate-documentation  --target GFMarkdown --disable-indexing --transform-for-static-hosting --hosting-base-path GFMarkdown.doccarchive
 
-cp -rp /root/swiftysites/.build/plugins/Swift-DocC/outputs/SwiftySites.doccarchive $STATIC_WEBSITE_ROOT
-cp -rp /root/swiftysites/.build/plugins/Swift-DocC/outputs/GFMarkdown.doccarchive $STATIC_WEBSITE_ROOT
+cp -rp .build/plugins/Swift-DocC/outputs/SwiftySites.doccarchive $STATIC_WEBSITE_ROOT
+cp -rp .build/plugins/Swift-DocC/outputs/GFMarkdown.doccarchive $STATIC_WEBSITE_ROOT
 ```
 
 On your website make sure to link to `/docc/SwiftySites.doccarchive/documentation/root`.
