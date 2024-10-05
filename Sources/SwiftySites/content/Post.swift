@@ -1,7 +1,7 @@
 import Foundation
 
 /// A content type representing a blog post or article.
-public struct Post: Content {
+public struct Post: Content, Sendable {
 
     /// The path of this content item.
     public let path: String

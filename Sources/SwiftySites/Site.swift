@@ -1,7 +1,7 @@
 import Foundation
 
 /// Defines a site in terms of its content types.
-public struct Site<each C: Content> {
+public struct Site<each C: Content>: Sendable {
  
     /// Creates an instance of Site from a set of content elements and templates. The initializer also requires a site configuration.
     /// - Parameters:

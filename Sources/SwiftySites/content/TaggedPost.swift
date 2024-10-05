@@ -4,7 +4,7 @@ import Foundation
 ///
 /// Each post can contain a series of labels or tags that can be used to generate indexes.
 ///
-public struct TaggedPost: Content {
+public struct TaggedPost: Content, Sendable {
 
     /// The path of this content item.
     public let path: String

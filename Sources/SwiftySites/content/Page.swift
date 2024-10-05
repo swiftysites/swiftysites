@@ -1,7 +1,7 @@
 import Foundation
 
 /// A content type representing a regular page.
-public struct Page: Content {
+public struct Page: Content, Sendable {
 
     /// The path of this content item.
     public let path: String

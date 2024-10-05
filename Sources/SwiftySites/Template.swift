@@ -1,7 +1,7 @@
 import Foundation
 
 /// A template for site content.
-public struct Template<C: Content> {
+public struct Template<C: Content>: Sendable {
     
     /// By default the template matches all content of one specific type.
     public static var defaultMatch: Regex<Substring> {
@@ -40,7 +40,7 @@ public struct Template<C: Content> {
     ///
     /// See <doc:Template> for more elaborate examples and explanations.
     ///
-    public init(_ match: Regex<Substring> = Template.defaultMatch, exclude: Regex<Substring>? = .none, index: String? = Template.defaultIndex, suffix: String? = Template.defaultSuffix, apply: @escaping (C) -> String) {
+    public init(_ match: Regex<Substring> = Template.defaultMatch, exclude: Regex<Substring>? = .none, index: String? = Template.defaultIndex, suffix: String? = Template.defaultSuffix, apply: @Sendable @escaping (C) -> String) {
         self.match = match
         self.exclude = exclude
         self.index = index
@@ -48,13 +48,13 @@ public struct Template<C: Content> {
         self.apply = apply
     }
 
-    let match: Regex<Substring>
-    let exclude: Regex<Substring>?
+    nonisolated(unsafe) let match: Regex<Substring>
+    nonisolated(unsafe) let exclude: Regex<Substring>?
     let index: String?
     let suffix: String?
     
     // let pattern: any RegexComponent
-    let apply: (C) -> String
+    let apply: @Sendable (C) -> String
 
     func apply(_ contentItems: [C], baseURL: URL) -> [URL] {
         contentItems.compactMap { contentItem in

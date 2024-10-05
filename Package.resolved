@@ -1,13 +1,13 @@
 {
-  "originHash" : "2c209c3bd258b25c6c4dccbf730c05af05fecd661e5fa5d8d30803eb0ab287c3",
+  "originHash" : "2274955fb4948e3bddd914e703d26294bf51e069663b7a793132e151a5c8e68f",
   "pins" : [
     {
       "identity" : "gfmarkdown",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftysites/gfmarkdown",
       "state" : {
-        "branch" : "release",
-        "revision" : "524dddb3d19356a463a1507fcf36fef882f9fe89"
+        "revision" : "524dddb3d19356a463a1507fcf36fef882f9fe89",
+        "version" : "1.0.4"
       }
     },
     {

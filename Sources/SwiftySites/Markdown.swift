@@ -14,7 +14,7 @@ import GFMarkdown
 /// print($content) // "# Hello"
 /// ```
 ///
-@propertyWrapper public struct Markdown {
+@propertyWrapper public struct Markdown: Sendable {
 
     /// Converts to HTML using `GFMarkdown/MarkdownString``.
     private static func toHTML(_ value: String) -> String {

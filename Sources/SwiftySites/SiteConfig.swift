@@ -2,7 +2,7 @@ import Foundation
 
 /// Global site configuration including metadata like language and description.
 /// It also contains options affecting the behavior of the site such as the base URL for development and production deployments.
-public struct SiteConfig {
+public struct SiteConfig: Sendable {
 
     /// The default language code: English (US).
     public static let defaultLanguage = "en-us"

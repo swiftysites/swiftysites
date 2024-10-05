@@ -1,7 +1,7 @@
 import Foundation
 
 /// A map containing all of the site's entry points.
-public struct SiteMap {
+public struct SiteMap: Sendable {
 
     /// All of the site's entry points.
     public let urls: [URL]
