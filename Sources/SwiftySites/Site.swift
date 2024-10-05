@@ -36,8 +36,8 @@ public struct Site<each C: Content> {
     ///  
     @discardableResult public func render(clean: Bool? = nil, skipSitemap: Bool? = nil, skipStatic: Bool? = nil) -> SiteMap {
         // Parse the command-line.
-        let options = RenderCommand.parseOrExit()
-        
+        let options = (try? RenderCommand.parse()) ?? RenderCommand()
+
         // Flags.
         let clean = clean ?? options.clean
         let skipSitemap = skipSitemap ?? options.skipSitemap

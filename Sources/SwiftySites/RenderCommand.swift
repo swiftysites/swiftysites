@@ -2,7 +2,8 @@ import ArgumentParser
 
 /// A `ParsableCommand` containing all available command-line options.
 struct RenderCommand: ParsableCommand {
-    static var configuration = CommandConfiguration(
+
+    static let configuration = CommandConfiguration(
         commandName: "swift run",
         abstract: """
         This program generates the site defined in main.js using the SwiftySites library.

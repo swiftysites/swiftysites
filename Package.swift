@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 import PackageDescription
 
 let package = Package(
@@ -10,9 +10,9 @@ let package = Package(
             targets: ["SwiftySites"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.0.0"),
         .package(url: "https://github.com/swiftysites/gfmarkdown", branch: "release"),
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.3.0")
+        .package(url: "https://github.com/swiftlang/swift-docc-plugin", from: "1.0.0")
     ],
     targets: [
         .target(
@@ -21,7 +21,6 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "GFMarkdown", package: "gfmarkdown")
             ]
-            //, swiftSettings: [.enableExperimentalFeature("VariadicGenerics")]
         ),
         .testTarget(
             name: "SwiftySitesTests",
